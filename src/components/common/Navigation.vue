@@ -1,16 +1,30 @@
 <template>
   <div class="nav">
-    <router-link tag="a" to="/" class="active">Home</router-link>   
-    <router-link tag="a" to="/about" class="">About</router-link>
+    <router-link tag="a" to="/" class="green">Home</router-link>
+    <router-link v-if="isAuth" tag="a" to="/records/all" class="">Records</router-link>
+    <router-link v-if="isAuth" tag="a" to="/orders/all" class="">Orders</router-link>
+    <router-link v-if="isAuth" tag="a" to="/about" class @click="onLogout">Log out</router-link>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    isAuth: Boolean
+  },
+  name: "Navigation",
+  methods: {
+    onLogout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      this.$emit("onAuth", false);
+    }
+  }
+};
 </script>
 
 <style>
-/* Add a black background color to the top navigation */
+/*Add a black background color to the top navigation*/
 .nav {
   background-color: #4b0082;
   overflow: hidden;
@@ -33,8 +47,9 @@ export default {};
 }
 
 /* Add a color to the active/current link */
-.nav a.active {
+.nav a.green {
   background-color: #4caf50;
   color: white;
 }
+
 </style>
