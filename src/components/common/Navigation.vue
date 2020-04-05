@@ -1,24 +1,33 @@
 <template>
   <div class="nav">
     <router-link tag="a" to="/" class="green">Home</router-link>
-    <router-link v-if="isAuth" tag="a" to="/records/all" class="">Records</router-link>
-    <router-link v-if="isAuth" tag="a" to="/orders/all" class="">Orders</router-link>
-    <router-link v-if="isAuth" tag="a" to="/about" class @click="onLogout">Log out</router-link>
+    <router-link v-if="isAuth" tag="a" to="/records/all" class>Records</router-link>
+    <router-link v-if="isAuth" tag="a" to="/orders/all" class>Orders</router-link>
+    <router-link v-if="isAuth" tag="a" to="/" class @click="onLogout">Log out</router-link>
   </div>
 </template>
 
 <script>
+const fb = require("../../firebaseConfig.js");
+import { mapState } from "vuex";
+
+
 export default {
-  props: {
-    isAuth: Boolean
-  },
-  name: "Navigation",
   methods: {
-    onLogout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userId");
-      this.$emit("onAuth", false);
+    logout() {
+      fb.auth
+        .signOut()
+        .then(() => {
+          this.$store.dispatch("clearData");
+          this.$router.push("/login");
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
+  },
+  computed: {
+    ...mapState(["isAuth"])
   }
 };
 </script>
@@ -51,5 +60,4 @@ export default {
   background-color: #4caf50;
   color: white;
 }
-
 </style>
