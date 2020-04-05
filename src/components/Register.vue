@@ -1,8 +1,7 @@
 <template>
   <div class="jumbotron mx-auto bg-color">
-    <div v-if="success">Registration Successful</div>
-    <form class="mx-auto mt-5" v-else @submit.prevent="submitHandler">
-      <fieldset >
+    <form class="mx-auto mt-5" @submit.prevent="submitHandler">
+      <fieldset>
         <h1>Registration Form</h1>
 
         <p class="field field-icon">
@@ -108,6 +107,7 @@
 </template>
 
 <script>
+const fb = require("../firebaseConfig.js");
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -144,23 +144,42 @@ export default {
       alphanumeric
     },
     password: {
-      required: true,
+      required,
       minLength: minLength(3),
       maxLength: maxLength(16),
       alphanumeric
     },
     rePassword: {
       sameAs: sameAs("password")
-    },
-    methods: {
-      submitHandler() {
-        this.$v.$touch();
-        if (this.$v.$error) {
-          return;
-        }
-        console.log("Form was validated successfully!");
-        this.success = true;
-      }
+    }
+  },
+
+  methods: {
+    submitHandler() {
+      fb.auth
+        .createUserWithEmailAndPassword(this.email, this.password)
+        .then(temp => {  
+          let user = temp.user;   
+          this.$store.commit("setCurrentUser", user);
+
+
+          fb.usersCollection
+            .doc(user.uid)
+            .set({
+              username: this.username,
+              address: this.address
+            })
+            .then(() => {
+              this.$store.dispatch("fetchUserProfile");
+              this.$router.push("/");
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }
 };

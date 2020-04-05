@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <app-navigation></app-navigation>
-    <router-view></router-view>
+    <router-view ></router-view>
   </div>
 </template>
 
@@ -9,11 +9,16 @@
 import AppNavigation from "./components/common/Navigation.vue";
 
 export default {
-  name: "App",
+  name: 'App',
+  data: function() {
+    return {
+      isAuth: localStorage.getItem('token') !== null
+    }
+  },
   components: {
-    AppNavigation,
+    AppNavigation
   }
-};
+}
 </script>
 
 <style>
