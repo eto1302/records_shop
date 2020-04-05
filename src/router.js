@@ -10,7 +10,7 @@ import firebase from 'firebase'
 const router = new VueRouter({
     routes: [
         {
-            path: '*', 
+            path: '*',
             component: ErrorComponent
         },
         {
@@ -27,7 +27,10 @@ const router = new VueRouter({
         },
         {
             path: '/records/create',
-            component: RecordsCreate
+            component: RecordsCreate,
+            meta: {
+                requiresAuth: true
+            }
         },
     ],
     mode: 'history'

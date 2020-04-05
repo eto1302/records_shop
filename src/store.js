@@ -7,6 +7,7 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
     state: {
         currentUser: null,
+        isAuth: false,
         userProfile: {}
     },
     actions: {
@@ -16,13 +17,17 @@ export const store = new Vuex.Store({
             }).catch(err => {
                 console.log(err);
             })
+        },
+        clearData({commit}){
+            commit('setCurrentUser', null)
+            commit('setUserProfile', {})
         }
     },
     mutations: {
         
         setCurrentUser(state, val){
             state.currentUser = val;
-            
+            state.isAuth = true;
         },
         setUserProfile(state, val) {
             state.userProfile = val;

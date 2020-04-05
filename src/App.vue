@@ -7,6 +7,7 @@
 
 <script>
 import AppNavigation from "./components/common/Navigation.vue";
+import { mapState } from 'vuex';
 
 export default {
   name: 'App',
@@ -17,6 +18,9 @@ export default {
   },
   components: {
     AppNavigation
+  },
+  computed: {
+    ...mapState(['isAuth'])
   }
 }
 </script>

@@ -1,8 +1,7 @@
 <template>
   <div class="jumbotron mx-auto bg-color">
-    <div v-if="success">Records Creation Successful</div>
-    <form class="mx-auto mt-5" v-else @submit.prevent="submitHandler">
-      <fieldset >
+    <form class="mx-auto mt-5" @submit.prevent="submitHandler">
+      <fieldset>
         <h1>Records Creation Form</h1>
 
         <p class="field field-icon">
@@ -63,7 +62,7 @@
             type="text"
             name="imgUrl"
             id="imgUrl"
-            placeholder=""
+            placeholder
             v-model="imgUrl"
             @blur="$v.imgUrl.$touch"
           />
@@ -72,23 +71,20 @@
         <template v-if="$v.imgUrl.$error">
           <p v-if="!$v.imgUrl.required" class="error">Image URL is required!</p>
           <p v-else-if="!$v.imgUrl.imgUrl" class="error">Image URL is invalid!</p>
-        </template>        
+        </template>
 
         <p>
           <button>Create Record</button>
-        </p>        
+        </p>
       </fieldset>
     </form>
   </div>
 </template>
 
 <script>
+const fb = require("../../firebaseConfig.js");
 import { validationMixin } from "vuelidate";
-import {
-  required,  
-  maxLength
-} from "vuelidate/lib/validators";
-
+import { required, maxLength } from "vuelidate/lib/validators";
 
 export default {
   mixins: [validationMixin],
@@ -103,28 +99,32 @@ export default {
   validations: {
     name: {
       required,
-      maxLength: maxLength(50),
+      maxLength: maxLength(50)
     },
     artist: {
       required,
-      maxLength: maxLength(50),
+      maxLength: maxLength(50)
     },
     genre: {
       required,
-      maxLength: maxLength(30),      
+      maxLength: maxLength(30)
     },
     imgUrl: {
       required
-    },
-    methods: {
-      submitHandler() {
-        this.$v.$touch();
-        if (this.$v.$error) {
-          return;
-        }
-        console.log("Form was validated successfully!");
-        this.success = true;
-      }
+    }
+  },
+
+  methods: {
+    submitHandler() {
+      fb.recordsCollection.add({
+        name: this.name,
+        artist: this.artist,
+        genre: this.genre,
+        imgUrl: this.imgUrl
+      }).then(r => {
+        console.log(r);
+        this.$router.push('/');
+      })
     }
   }
 };
