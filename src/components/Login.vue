@@ -1,27 +1,25 @@
 <template>
   <div class="jumbotron mx-auto bg-color">
-    <div v-if="success">Registration Successful</div>
-    <form class="mx-auto mt-5" v-else @submit.prevent="submitHandler">
-      <fieldset >
+    <form class="mx-auto mt-5" @submit.prevent="submitHandler">
+      <fieldset>
         <h1>Login Form</h1>
 
         <p class="field field-icon">
-          <label for="username"></label>
+          <label for="email"></label>
           <input
             type="text"
-            name="username"
-            id="username"
-            class="error"
-            placeholder="Mark Ulrich"
-            v-model="username"
-            @blur="$v.username.$touch"
+            name="email"
+            id="email"
+            placeholder="marg@gmial.com"
+            v-model="email"
+            @blur="$v.email.$touch"
           />
         </p>
 
-        <template v-if="$v.username.$error">
-          <p v-if="!$v.username.required" class="error">Username is required!</p>
-          <p v-else-if="!$v.username.username" class="error">Username is invalid!</p>
-        </template>        
+        <template v-if="$v.email.$error">
+          <p v-if="!$v.email.required" class="error">Email is required!</p>
+          <p v-else-if="!$v.email.email" class="error">Email is invalid!</p>
+        </template>
 
         <p class="field field-icon">
           <label for="password"></label>
@@ -37,20 +35,15 @@
 
         <template v-if="$v.password.$error">
           <p v-if="!$v.password.required" class="error">Password is required!</p>
-          <p
-            v-else-if="!$v.password.minLength || !$v.password.maxLenght"
-            class="error"
-          >Password should be between 3 and 16 symbols!</p>
-          <p v-else-if="!$v.password.alphanumeric" class="error">Password should match [0-9A-Za-z]!</p>
-        </template>        
+        </template>
 
         <p>
-          <button>Login</button>
+          <button>Create Account</button>
         </p>
 
         <p class="text-center">
-          Don't have an account?
-          <router-link tag="a" to="/register" class="nav-link-white text-primary">Register</router-link>
+          Have an account?
+          <router-link tag="a" to="/login" class="nav-link-white text-primary">Login</router-link>
         </p>
       </fieldset>
     </form>
@@ -58,43 +51,45 @@
 </template>
 
 <script>
+const fb = require("../firebaseConfig.js");
 import { validationMixin } from "vuelidate";
-import {
-  required,
-  minLength,
-  maxLength
-} from "vuelidate/lib/validators";
-import { helpers } from "vuelidate/lib/validators";
-const alphanumeric = helpers.regex("alphanumeric", /^[a-zA-Z0-9]*$/);
+import { required, email } from "vuelidate/lib/validators";
 
 export default {
   mixins: [validationMixin],
   data() {
     return {
-      username: "",
+      email: "",
       password: ""
     };
   },
   validations: {
-    username: {
+    email: {
       required,
-      alphanumeric      
+      email
     },
     password: {
-      required,
-      minLength: minLength(3),
-      maxLength: maxLength(16),
-      alphanumeric
-    },
-    methods: {
-      submitHandler() {
-        this.$v.$touch();
-        if (this.$v.$error) {
-          return;
-        }
-        console.log("Form was validated successfully!");
-        this.success = true;
-      }
+      required
+    }
+  },
+
+  methods: {
+    submitHandler() {
+      console.log(this.email, this.password)
+      fb.auth
+        .signInWithEmailAndPassword(
+          this.email,
+          this.password
+        )
+        .then(temp => {
+          let user = temp.user;
+          this.$store.commit("setCurrentUser", user);
+          this.$store.dispatch("fetchUserProfile");
+          this.$router.push("/");
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }
 };
