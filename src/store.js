@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-const fb= require('./firebaseConfig.js');
+import createPersistedState from "vuex-persistedstate";
+
+const fb = require('./firebaseConfig.js');
 
 Vue.use(Vuex)
 
@@ -8,29 +10,47 @@ export const store = new Vuex.Store({
     state: {
         currentUser: null,
         isAuth: false,
-        userProfile: {}
+        userProfile: {},
+        records: [],
+        selectedRecord: {},
+        orders: []
     },
     actions: {
-        fetchUserProfile({commit, state}) {
+        fetchUserProfile({ commit, state }) {
             fb.usersCollection.doc(state.currentUser.uid).get().then(res => {
                 commit('setUserProfile', res.data())
             }).catch(err => {
                 console.log(err);
             })
         },
-        clearData({commit}){
+        clearData({ commit }) {
             commit('setCurrentUser', null)
             commit('setUserProfile', {})
+            commit('setRecords', {})
         }
     },
     mutations: {
-        
-        setCurrentUser(state, val){
+
+        setCurrentUser(state, val) {
             state.currentUser = val;
-            state.isAuth = true;
+            state.isAuth = val === null ? false : true;
         },
         setUserProfile(state, val) {
             state.userProfile = val;
+        },
+        setRecords(state, val) {
+            state.records = val;
+        },
+        selectRecord(state, val) {
+            fb.recordsCollection.doc(val)
+                .get().then(snapshot => {
+                    if (!snapshot.exists) return undefined;
+                    state.selectedRecord = snapshot.data();                    
+                });
+        },
+        setOrders(state, val) {
+            state.orders = val.filter(o => o.userEmail === state.currentUser.email);
         }
-    }
+    },
+    plugins: [createPersistedState()]
 })

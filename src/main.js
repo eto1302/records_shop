@@ -13,7 +13,7 @@ Vue.config.productionTip = false;
 Vue.use(BootstrapVue);
 Vue.use(VueRouter);
 
-let app
+let app;
 fb.auth.onAuthStateChanged(user => {
     if (!app) {
         user;
@@ -22,6 +22,36 @@ fb.auth.onAuthStateChanged(user => {
             router,
             store,
             render: h => h(App)
+        })
+    }
+})
+
+fb.auth.onAuthStateChanged(user => {
+    if (user) {
+        store.commit('setCurrentUser', user)
+        store.dispatch('fetchUserProfile')
+
+        fb.recordsCollection.onSnapshot(querySnapshot => {
+            let recordsArray = []
+
+            querySnapshot.forEach(doc => {
+                let record = doc.data()
+                record.id = doc.id
+                recordsArray.push(record)
+            })
+
+            store.commit('setRecords', recordsArray)
+        })
+        fb.ordersCollection.onSnapshot(querySnapshot => {
+            let ordersArray = []
+
+            querySnapshot.forEach(doc => {
+                let order = doc.data()
+                order.id = doc.id
+                ordersArray.push(order)
+            })
+
+            store.commit('setOrders', ordersArray)
         })
     }
 })

@@ -11,7 +11,7 @@
             name="name"
             id="name"
             class="error"
-            placeholder="ex. Nevermind"
+            placeholder="Record Name"
             v-model="name"
             @blur="$v.name.$touch"
           />
@@ -28,7 +28,7 @@
             type="text"
             name="artist"
             id="artist"
-            placeholder="ex. Nirvana"
+            placeholder="Record Artist"
             v-model="artist"
             @blur="$v.artist.$touch"
           />
@@ -45,7 +45,7 @@
             type="text"
             name="genre"
             id="genre"
-            placeholder="ex. Rock"
+            placeholder="Record Genre"
             v-model="genre"
             @blur="$v.genre.$touch"
           />
@@ -61,8 +61,8 @@
           <input
             type="text"
             name="imgUrl"
-            id="imgUrl"
-            placeholder
+            id="imgUrl"            
+            placeholder="Image Url"
             v-model="imgUrl"
             @blur="$v.imgUrl.$touch"
           />
@@ -71,6 +71,23 @@
         <template v-if="$v.imgUrl.$error">
           <p v-if="!$v.imgUrl.required" class="error">Image URL is required!</p>
           <p v-else-if="!$v.imgUrl.imgUrl" class="error">Image URL is invalid!</p>
+        </template>
+
+        <p class="field field-icon">
+          <label for="cost"></label>
+          <input
+            type="number"
+            name="cost"
+            id="cost"
+            placeholder="Record Cost"
+            v-model="cost"
+            @blur="$v.cost.$touch"
+          />
+        </p>
+
+        <template v-if="$v.cost.$error">
+          <p v-if="!$v.cost.required" class="error">Cost is required!</p>
+          <p v-else-if="!$v.cost.cost" class="error">Cost is invalid!</p>
         </template>
 
         <p>
@@ -84,7 +101,7 @@
 <script>
 const fb = require("../../firebaseConfig.js");
 import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import { required, maxLength, decimal} from "vuelidate/lib/validators";
 
 export default {
   mixins: [validationMixin],
@@ -93,7 +110,8 @@ export default {
       name: "",
       artist: "",
       genre: "",
-      imgUrl: ""
+      imgUrl: "",
+      cost: ""
     };
   },
   validations: {
@@ -111,20 +129,24 @@ export default {
     },
     imgUrl: {
       required
+    },
+    cost: {
+      required,
+      decimal
     }
   },
 
   methods: {
     submitHandler() {
-      fb.recordsCollection.add({
-        name: this.name,
-        artist: this.artist,
-        genre: this.genre,
-        imgUrl: this.imgUrl
-      }).then(r => {
-        console.log(r);
-        this.$router.push('/');
-      })
+      fb.recordsCollection
+        .add({
+          name: this.name,
+          artist: this.artist,
+          genre: this.genre,
+          imgUrl: this.imgUrl,
+          cost: this.cost
+        })
+        .then(this.$router.push("/"));
     }
   }
 };

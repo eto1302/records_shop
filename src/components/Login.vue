@@ -38,12 +38,12 @@
         </template>
 
         <p>
-          <button>Create Account</button>
+          <button>Log In</button>
         </p>
 
         <p class="text-center">
-          Have an account?
-          <router-link tag="a" to="/login" class="nav-link-white text-primary">Login</router-link>
+          Don't have an account?
+          <router-link tag="a" to="/register" class="nav-link-white text-primary">Register</router-link>
         </p>
       </fieldset>
     </form>
@@ -75,7 +75,6 @@ export default {
 
   methods: {
     submitHandler() {
-      console.log(this.email, this.password)
       fb.auth
         .signInWithEmailAndPassword(
           this.email,

@@ -1,8 +1,16 @@
 import VueRouter from 'vue-router';
+
 import Home from './components/Home.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
+
 import RecordsCreate from './components/Records/Create.vue'
+import RecordsAll from './components/Records/All.vue'
+import RecordsDetails from './components/Records/Details.vue'
+
+import OrdersCreate from './components/Orders/Create.vue'
+import OrdersAll from './components/Orders/All.vue'
+
 import ErrorComponent from './components/Error.vue'
 import firebase from 'firebase'
 
@@ -28,6 +36,34 @@ const router = new VueRouter({
         {
             path: '/records/create',
             component: RecordsCreate,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/records/all',
+            component: RecordsAll,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/records/details/:id',
+            component: RecordsDetails,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/orders/create/:id',
+            component: OrdersCreate,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/orders/all',
+            component: OrdersAll,
             meta: {
                 requiresAuth: true
             }
