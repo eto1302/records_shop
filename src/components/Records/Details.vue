@@ -12,25 +12,42 @@
     <h3 class="text-center">Cost: ${{selectedRecord.cost}}</h3>
     <hr class="hr-2 bg-dark" />
     <h3 class="text-center">Actions:</h3>
-    <router-link
-      tag="button"
-      :to="'/orders/create/' + this.$route.params.id"
-      href
-      type="button"
-      class="btn btn-primary col-4"
-    >Order</router-link>
+    <button tag="button" @click="createOrder" type="button" class="btn btn-success col-4">Order</button>
+    <button tag="button" @click="removeRecord" type="button" class="btn btn-danger col-4">Delete</button>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+const fb = require("../../firebaseConfig.js");
+
 export default {
+  methods: {
+    createOrder: function() {
+      fb.ordersCollection
+        .add({
+          recordName: this.selectedRecord.name,
+          recordArtist: this.selectedRecord.artist,
+          recordImgUrl: this.selectedRecord.imgUrl,
+          recordGenre: this.selectedRecord.genre,
+          userEmail: this.currentUser.email,
+          cost: this.selectedRecord.cost,
+          dateCreated: new Date().toLocaleString()
+        })
+        .then(this.$router.push("/orders/all"));
+    },
+    removeRecord: function() {
+      this.$store.commit("removeRecord", this.$route.params.id);
+      this.$router.push("/records/all");
+    }
+  },
   created: function() {
     this.$store.commit("selectRecord", this.$route.params.id);
     this.$store.dispatch("fetchUserProfile");
   },
   computed: {
-    ...mapState(["selectedRecord"])
+    ...mapState(["selectedRecord"]),
+    ...mapState(["currentUser"])
   }
 };
 </script>
