@@ -13,7 +13,8 @@ export const store = new Vuex.Store({
         userProfile: {},
         records: [],
         selectedRecord: {},
-        orders: []
+        orders: [],
+        selectedOrder: {}
     },
     actions: {
         fetchUserProfile({ commit, state }) {
@@ -48,8 +49,23 @@ export const store = new Vuex.Store({
                     state.selectedRecord = snapshot.data();                    
                 });
         },
+        removeRecord(state, val){
+            fb.recordsCollection.doc(val)
+                .delete();
+        },
         setOrders(state, val) {
             state.orders = val.filter(o => o.userEmail === state.currentUser.email);
+        },
+        selectOrder(state, val) {
+            fb.ordersCollection.doc(val)
+                .get().then(snapshot => {
+                    if (!snapshot.exists) return undefined;
+                    state.selectedOrder = snapshot.data();                    
+                });
+        },
+        removeOrder(state, val){
+            fb.ordersCollection.doc(val)
+                .delete();
         }
     },
     plugins: [createPersistedState()]

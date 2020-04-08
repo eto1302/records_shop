@@ -8,8 +8,8 @@ import RecordsCreate from './components/Records/Create.vue'
 import RecordsAll from './components/Records/All.vue'
 import RecordsDetails from './components/Records/Details.vue'
 
-import OrdersCreate from './components/Orders/Create.vue'
 import OrdersAll from './components/Orders/All.vue'
+import OrdersDetails from './components/Orders/Details.vue'
 
 import ErrorComponent from './components/Error.vue'
 import firebase from 'firebase'
@@ -55,15 +55,15 @@ const router = new VueRouter({
             }
         },
         {
-            path: '/orders/create/:id',
-            component: OrdersCreate,
+            path: '/orders/all',
+            component: OrdersAll,
             meta: {
                 requiresAuth: true
             }
         },
         {
-            path: '/orders/all',
-            component: OrdersAll,
+            path: '/orders/details/:id',
+            component: OrdersDetails,
             meta: {
                 requiresAuth: true
             }
