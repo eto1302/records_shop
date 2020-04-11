@@ -1,1 +1,1 @@
-# records_shop
+This is an online music records shop. It has functionality to create and list records along with their details. A record can be ordered. The orders are then listed and can be viewed with their details. Records and Orders can be deleted only by the user who created them. There is authentication functionality. The database used is firebase.
