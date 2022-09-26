@@ -13,7 +13,7 @@
     "bootstrap-vue": "^2.9.0",
     "core-js": "^3.6.4",
     "firebase": "^7.13.2",
-    "kinvey-html5-sdk": "^4.2.5",
+    "kinvey-html5-sdk": "^8.0.0",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6",
     "vuex": "^3.1.3",
